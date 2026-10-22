@@ -1,0 +1,59 @@
+{
+  "id": "/",
+  "name": "Chargeback AI — Payment Dispute & Revenue Recovery",
+  "short_name": "ChargebackAI",
+  "description": "AI-Powered Payment Dispute & Revenue Recovery Platform for online merchants and SaaS businesses.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#020617",
+  "background_color": "#020617",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Dispute",
+      "short_name": "New Dispute",
+      "description": "Register and prepare a payment dispute response",
+      "url": "/?view=cases&action=new"
+    },
+    {
+      "name": "AI Analyst",
+      "short_name": "AI Analyst",
+      "description": "Evaluate dispute recovery potential with Gemini AI",
+      "url": "/?view=ai-analyst"
+    },
+    {
+      "name": "Financial Overview",
+      "short_name": "Overview",
+      "description": "View dispute recovery and win rate metrics",
+      "url": "/?view=dashboard"
+    }
+  ],
+  "related_applications": []
+}

@@ -1,0 +1,215 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 1024 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Organization": {
+      "title": "Organization",
+      "description": "Tenant business workspace",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "businessType": { "type": "string", "maxLength": 64 },
+        "website": { "type": "string", "maxLength": 256 },
+        "monthlyVolume": { "type": "string", "maxLength": 64 },
+        "currency": { "type": "string", "maxLength": 8 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "plan": { "type": "string", "enum": ["free", "starter", "growth", "enterprise"] },
+        "subscriptionStatus": { "type": "string", "enum": ["active", "trialing", "past_due", "canceled", "incomplete"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "ownerId", "plan", "subscriptionStatus"]
+    },
+    "Membership": {
+      "title": "Membership",
+      "description": "User association to an organization with RBAC role",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "organizationId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 256 },
+        "userDisplayName": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["owner", "admin", "analyst", "viewer"] },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "organizationId", "userId", "role"]
+    },
+    "Invitation": {
+      "title": "Invitation",
+      "description": "Pending invitation to join an organization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "organizationId": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "role": { "type": "string", "enum": ["admin", "analyst", "viewer"] },
+        "token": { "type": "string", "maxLength": 128 },
+        "invitedBy": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["pending", "accepted", "revoked", "expired"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "organizationId", "email", "role", "token", "status"]
+    },
+    "Dispute": {
+      "title": "Dispute",
+      "description": "Chargeback dispute case record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "organizationId": { "type": "string", "maxLength": 128 },
+        "internalCaseId": { "type": "string", "maxLength": 64 },
+        "transactionRef": { "type": "string", "maxLength": 128 },
+        "orderRef": { "type": "string", "maxLength": 128 },
+        "paymentProcessor": { "type": "string", "maxLength": 64 },
+        "disputeReasonCode": { "type": "string", "maxLength": 64 },
+        "disputeReasonCategory": { "type": "string", "maxLength": 64 },
+        "disputeAmount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 8 },
+        "transactionDate": { "type": "string" },
+        "disputeReceivedDate": { "type": "string" },
+        "submissionDeadline": { "type": "string" },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "customerEmail": { "type": "string", "maxLength": 256 },
+        "trackingNumber": { "type": "string", "maxLength": 128 },
+        "carrier": { "type": "string", "maxLength": 64 },
+        "refundStatus": { "type": "string", "maxLength": 32 },
+        "status": { "type": "string", "enum": ["new", "under_review", "evidence_needed", "ready_for_submission", "submitted", "won", "lost", "closed"] },
+        "priority": { "type": "string", "enum": ["urgent", "high", "medium", "low"] },
+        "winStatus": { "type": "string", "enum": ["pending", "won", "lost"] },
+        "recoveredAmount": { "type": "number" },
+        "assignedToUserId": { "type": "string", "maxLength": 128 },
+        "notes": { "type": "string", "maxLength": 2048 },
+        "evidenceChecklist": { "type": "string", "maxLength": 4096 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "organizationId", "internalCaseId", "disputeAmount", "currency", "status"]
+    },
+    "AiAnalysis": {
+      "title": "AiAnalysis",
+      "description": "Gemini AI dispute analysis, evidence checklist and rebuttal draft",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "organizationId": { "type": "string", "maxLength": 128 },
+        "disputeId": { "type": "string", "maxLength": 128 },
+        "summary": { "type": "string", "maxLength": 4096 },
+        "reasonExplanation": { "type": "string", "maxLength": 2048 },
+        "missingEvidence": { "type": "string", "maxLength": 4096 },
+        "availableEvidence": { "type": "string", "maxLength": 4096 },
+        "recommendations": { "type": "string", "maxLength": 4096 },
+        "weaknesses": { "type": "string", "maxLength": 2048 },
+        "urgency": { "type": "string", "maxLength": 32 },
+        "confidence": { "type": "string", "maxLength": 32 },
+        "draftResponse": { "type": "string", "maxLength": 8192 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "organizationId", "disputeId", "summary"]
+    },
+    "Import": {
+      "title": "Import",
+      "description": "CSV data import log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "organizationId": { "type": "string", "maxLength": 128 },
+        "fileName": { "type": "string", "maxLength": 256 },
+        "rowCount": { "type": "integer" },
+        "importedCount": { "type": "integer" },
+        "skippedCount": { "type": "integer" },
+        "duplicateCount": { "type": "integer" },
+        "status": { "type": "string", "enum": ["completed", "failed", "partial"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "organizationId", "fileName", "rowCount", "importedCount", "status"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Tenant-scoped user notifications",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "organizationId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 256 },
+        "message": { "type": "string", "maxLength": 1024 },
+        "read": { "type": "boolean" },
+        "link": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "organizationId", "type", "title", "read"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Append-only security and operational audit trail",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "organizationId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 256 },
+        "action": { "type": "string", "maxLength": 64 },
+        "resourceType": { "type": "string", "maxLength": 64 },
+        "resourceId": { "type": "string", "maxLength": 128 },
+        "details": { "type": "string", "maxLength": 2048 },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "organizationId", "action", "resourceType", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/organizations/{organizationId}": {
+      "schema": { "$ref": "#/entities/Organization" },
+      "description": "Tenant organization workspace documents"
+    },
+    "/memberships/{membershipId}": {
+      "schema": { "$ref": "#/entities/Membership" },
+      "description": "User-to-organization membership mappings with RBAC"
+    },
+    "/invitations/{invitationId}": {
+      "schema": { "$ref": "#/entities/Invitation" },
+      "description": "Pending invitations for organizations"
+    },
+    "/disputes/{disputeId}": {
+      "schema": { "$ref": "#/entities/Dispute" },
+      "description": "Tenant chargeback dispute records"
+    },
+    "/ai_analyses/{analysisId}": {
+      "schema": { "$ref": "#/entities/AiAnalysis" },
+      "description": "AI analysis and draft dispute response documents"
+    },
+    "/imports/{importId}": {
+      "schema": { "$ref": "#/entities/Import" },
+      "description": "CSV import records"
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "In-app notification records"
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Immutable tenant audit log records"
+    }
+  }
+}

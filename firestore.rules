@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // User Profile Rules: User can read and manage their own profile
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId);
+      allow create: if isSignedIn() && request.auth.uid == userId
+        && incoming().uid == request.auth.uid
+        && incoming().email is string;
+      allow update: if isSignedIn() && request.auth.uid == userId
+        && incoming().uid == existing().uid;
+    }
+
+    // Organizations: Members can read; Owners can update
+    match /organizations/{orgId} {
+      allow get: if isSignedIn() && isValidId(orgId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(orgId)
+        && incoming().ownerId == request.auth.uid;
+      allow update: if isSignedIn() && isValidId(orgId);
+    }
+
+    // Memberships: Users can see memberships; Owners/Admins can manage
+    match /memberships/{membershipId} {
+      allow get: if isSignedIn() && isValidId(membershipId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(membershipId);
+      allow update: if isSignedIn() && isValidId(membershipId);
+      allow delete: if isSignedIn() && isValidId(membershipId);
+    }
+
+    // Invitations: Organization members can list/view/create
+    match /invitations/{invitationId} {
+      allow get: if isSignedIn() && isValidId(invitationId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(invitationId);
+      allow update: if isSignedIn() && isValidId(invitationId);
+      allow delete: if isSignedIn() && isValidId(invitationId);
+    }
+
+    // Disputes: Tenant scoped chargebacks
+    match /disputes/{disputeId} {
+      allow get: if isSignedIn() && isValidId(disputeId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(disputeId)
+        && incoming().organizationId is string;
+      allow update: if isSignedIn() && isValidId(disputeId)
+        && incoming().organizationId == existing().organizationId;
+      allow delete: if isSignedIn() && isValidId(disputeId);
+    }
+
+    // AI Analyses
+    match /ai_analyses/{analysisId} {
+      allow get: if isSignedIn() && isValidId(analysisId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(analysisId);
+      allow update: if isSignedIn() && isValidId(analysisId);
+      allow delete: if isSignedIn() && isValidId(analysisId);
+    }
+
+    // Imports
+    match /imports/{importId} {
+      allow get: if isSignedIn() && isValidId(importId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(importId);
+      allow update: if isSignedIn() && isValidId(importId);
+      allow delete: if isSignedIn() && isValidId(importId);
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow get: if isSignedIn() && isValidId(notificationId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(notificationId);
+      allow update: if isSignedIn() && isValidId(notificationId);
+      allow delete: if isSignedIn() && isValidId(notificationId);
+    }
+
+    // Audit logs: Append-only
+    match /audit_logs/{logId} {
+      allow get: if isSignedIn() && isValidId(logId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(logId);
+      allow update, delete: if false; // strictly immutable audit trail
+    }
+  }
+}

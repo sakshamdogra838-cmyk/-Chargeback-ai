@@ -1,0 +1,6 @@
+{
+  "name": "Chargeback AI",
+  "description": "AI-Powered Payment Dispute & Revenue Recovery Platform for online businesses.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
